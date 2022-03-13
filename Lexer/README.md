@@ -1,54 +1,54 @@
 # Metodos-Computacionales
 Implementación de un lexer de operaciones aritmeticas
 
-##Descripción
+## Descripción
 
 Este programa recibe como entrada un archivo de texto con expresiones aritmeticas respetando ciertas reglas.
 Entonces el programa devuelve una lista de tokens reconocido y su tipo. Si no se cumplen las reglas se manda un error.
 
 Lenguaje de programación: c++
 
-##Tipos de tokens reconocidos
+## Tipos de tokens reconocidos
 
-###Enteros
+### Enteros
 Ejemplo: 1  -15  8012    -501
 
-###Flotantes (Reales)
+### Flotantes (Reales)
 Ejemplo: 0.10203  5.123e-15  29.3192   33
 
 ###Operadores
-= Asignación
-+ Suma
-- Resta
-* Multiplicación
-/ División
-^ Potencia
+'=' Asignación
+'+' Suma
+'-' Resta
+'*' Multiplicación
+'/' División
+'^' Potencia
 
-###Identificadores
+### Identificadores
 Ejemplo: x1     num_registros   Variable
 
-###Símbolos especiales:
+### Símbolos especiales:
 ( Parentesis que abre
 )   Parentesis que cierra
 
-###Comentarios:
+### Comentarios:
 // seguido de caracteres hasta que se acabe el renglón
 
-##Reglas de formación de algunos tokens
+## Reglas de formación de algunos tokens
 
-###Variables:
+### Variables:
 Deben empezar con una letra (mayúscula o minúscula).
 Sólo están formadas por letras, números y underscore (‘_’).
 
-###Números reales (de punto flotante):
+### Números reales (de punto flotante):
 Pueden ser positivos o negativos
 Pueden o no tener parte decimal pero deben contener un punto (e.g. 10. o 10.0)
 Pueden usar notación exponencial con la letra E, mayúscula o minúscula, pero después de la letra E sólo puede ir un entero positivo o negativo (e.g. 2.3E3, 6.345e-5, -0.001E-3, .467E9).
 
-###Comentarios:
+### Comentarios:
 Inician con // y todo lo que sigue hasta que termina el renglón es un comentario
 
-#Manual de uso
+# Manual de uso
 
 1. Paso 1
 2. Paso 2
