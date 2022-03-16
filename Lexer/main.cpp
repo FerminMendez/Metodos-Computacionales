@@ -21,7 +21,7 @@ void lexerAritmetico(string archivo) {
 string getToken(int current, string archivo){
  string type=" ";
  string thisChar;
- if(type=" "){
+ if(type== " "){
  thisChar=identifyElement(archivo[current]);
 
  }
@@ -40,7 +40,7 @@ string identifyElement(char c){
 }
 
 bool isanum(char c){
-  vector<char> numbers={'0','1','2','3','4','5','6','7','8','9'};
+   vector<char> numbers={'0','1','2','3','4','5','6','7','8','9'};
   return find(numbers.begin(),numbers.end(),c) != numbers.end();
 }
 
