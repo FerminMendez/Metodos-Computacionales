@@ -16,7 +16,7 @@ Ejemplo: 1  -15  8012    -501
 ### Flotantes (Reales)
 Ejemplo: 0.10203  5.123e-15  29.3192   33
 
-###Operadores
+### Operadores
 '=' Asignación
 '+' Suma
 '-' Resta
@@ -27,11 +27,11 @@ Ejemplo: 0.10203  5.123e-15  29.3192   33
 ### Identificadores
 Ejemplo: x1     num_registros   Variable
 
-### Símbolos especiales:
+### Símbolos especiales
 ( Parentesis que abre
 )   Parentesis que cierra
 
-### Comentarios:
+### Comentarios
 // seguido de caracteres hasta que se acabe el renglón
 
 ## Reglas de formación de algunos tokens
