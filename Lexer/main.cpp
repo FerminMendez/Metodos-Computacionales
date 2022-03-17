@@ -5,7 +5,7 @@
 using namespace std;
 
 void lexerAritmetico(string archivo) {
-  int current=0;
+  int current=0;git
   string token;
   while(current<archivo.size()){
     cout<<archivo[current];
@@ -13,7 +13,7 @@ void lexerAritmetico(string archivo) {
 
     }
     else{
-      token=getToken(current, archivo);
+      token = getToken(current, archivo);
     }
     current++;
   }
@@ -23,9 +23,9 @@ void lexerAritmetico(string archivo) {
 string getToken(int current, string archivo){
  string type=" ";
  string thisChar;
+
  if(type==" "){
  thisChar=identifyElement(archivo[current]);
-
  }
  
 
