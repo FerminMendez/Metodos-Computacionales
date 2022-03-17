@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include<bits/stdc++.h>
+
 using namespace std;
 
 void lexerAritmetico(string archivo) {
@@ -21,7 +23,7 @@ void lexerAritmetico(string archivo) {
 string getToken(int current, string archivo){
  string type=" ";
  string thisChar;
- if(type=" "){
+ if(type==" "){
  thisChar=identifyElement(archivo[current]);
 
  }
@@ -39,9 +41,23 @@ string identifyElement(char c){
   }
 }
 
+//Para identificar si es un número
 bool isanum(char c){
   vector<char> numbers={'0','1','2','3','4','5','6','7','8','9'};
-  return find(numbers.begin(),numbers.end(),c) != numbers.end();
+
+    //El iterador nos sirve para avanzar en el vector.
+    std::vector<char>::iterator it;
+        
+    //Para averiguar si el char actual está en el vector de números.
+    it = find (numbers.begin(), numbers.end(), c);
+    if (it != numbers.end())
+    {
+      //Si el itarador no está en el final (es porque ya encontró que es un número)
+        return true;
+    }
+    else
+    //De otra forma, no es un número.
+       return false;
 }
 
 int main(int argc, char* argv[]) {
