@@ -5,17 +5,33 @@ using namespace std;
 
 
 
+char getType(char c){
+  if(c==1|| c==2 || c==3){
+    return 'n';
+  }
+  else{
+    return 'f';
+  }
+}
+
+
 void lexerAritmetico(string archivo) {
+  Token t;
   int* current=0;
   string token;
+  bool finishedToken=true;
   while(*current<archivo.size()){
     cout<<archivo[*current];
     if(archivo[*current]== ' ' || archivo[*current]=='\n'){
-      continue;
+      finishedToken=true;
     }
     else{
       Token t;
-      cout<<t.getnext(archivo, current);
+      while(t.valid(archivo[*current],getType(archivo[*current]))){
+        current++;
+      }
+      cout<<t.printToken();
+      finishedToken=false;
     }
     current++;
   }
@@ -37,7 +53,3 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
-bool isanum(char c){
-  vector<char> numbers={'0','1','2','3','4','5','6','7','8','9'};
-  return find(numbers.begin(),numbers.end(),c) != numbers.end();
-}

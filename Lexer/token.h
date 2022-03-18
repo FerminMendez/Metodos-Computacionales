@@ -10,55 +10,29 @@ class Token
 {
 private:
      std::string value;
-     
+     std::string type;
+     int state=0;
 public:
     Token();
-    std::string getnext(std::string file, int* current);
+    bool valid(char c,char type);
+    //std::string getnext(char type,char element);
+    std::string printToken();
 };
 
-std::string Token::getnext(std::string file, int* current){
-    std::string sol=" "+file[*current];
-    return sol;
+bool Token::valid(char c,char type){
+    if(type=='n' && state==0 {
+        return true;
+    }
+    return false;
 }
 
-class Kind
-{
-public:
-    Kind();
-    ~Kind();
-    int *state;
-    virtual char validchar(char c);
-
-};
-
-Kind:: Kind(){
-    *state=0;
-}
-Kind:: ~Kind(){
-    delete state;
+std::string Token::printToken(){
+    std::string s=(value + "es de tipo"+ type);
+    state=0;
+    type="";
+    return s;
 }
 
-class Number: public Kind
-{
-public:
-    Number();
-    char validchar(char c);
-};
-
-char Number:: validchar(char c){
-    switch (*state)
-    {
-    case 0:
-        if(c==0|| c==1  || c==2){
-            *state=1;
-            return 'v';
-        }
-    case 1:
-        if(c==0|| c==1  || c==2){
-            return 'v';
-        }
-    return 'f';
-}
 
 
 
