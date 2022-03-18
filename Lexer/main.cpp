@@ -5,7 +5,7 @@
 using namespace std;
 
 void lexerAritmetico(string archivo) {
-  int current=0;git
+  int current=0;
   string token;
   while(current<archivo.size()){
     cout<<archivo[current];
