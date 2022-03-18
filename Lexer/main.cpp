@@ -1,48 +1,30 @@
 #include <iostream>
 #include <vector>
+#include "token.h"
 using namespace std;
 
-void lexerAritmetico(string archivo) {
-  int current=0;
-  string token;
-  while(current<archivo.size()){
-    cout<<archivo[current];
-    if(archivo[current]== ' ' || archivo[current]=='\n'){
 
+
+void lexerAritmetico(string archivo) {
+  int* current=0;
+  string token;
+  while(*current<archivo.size()){
+    cout<<archivo[*current];
+    if(archivo[*current]== ' ' || archivo[*current]=='\n'){
+      continue;
     }
     else{
-      token=getToken(current, archivo);
+      Token t;
+      cout<<t.getnext(archivo, current);
     }
     current++;
   }
   // to do
 }
 
-string getToken(int current, string archivo){
- string type=" ";
- string thisChar;
- if(type=" "){
- thisChar=identifyElement(archivo[current]);
 
- }
- 
 
-}
 
-string identifyElement(char c){
-  if(isanum(c)){
-    return "num";
-  }
-  //...
-  else{
-    return "nf";
-  }
-}
-
-bool isanum(char c){
-  vector<char> numbers={'0','1','2','3','4','5','6','7','8','9'};
-  return find(numbers.begin(),numbers.end(),c) != numbers.end();
-}
 
 int main(int argc, char* argv[]) {
   // if (argc != 2) {
@@ -53,4 +35,9 @@ int main(int argc, char* argv[]) {
   //lexerAritmetico(argv[1]);
   lexerAritmetico(cadena);
   return 0;
+}
+
+bool isanum(char c){
+  vector<char> numbers={'0','1','2','3','4','5','6','7','8','9'};
+  return find(numbers.begin(),numbers.end(),c) != numbers.end();
 }
