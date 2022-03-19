@@ -24,58 +24,103 @@ void lexerAritmetico(string archivo) {
 
     // Definimos conjuntos para cada tipo de token que podríamos tener
 
-    /*Una variable empieza siempre por una letra, luego puede tener otra letra,
-    underscore o dígito */
-    string variable = "[a-zA-Z][a-zA-Z_0-9]*";  
-    /*Para los reales*/
-    string reales = "-*[0-9]+\\.[0-9]+([E][-*][0-9]+)?|-*[0-9]+(\\.[0-9]+)?"; // con los () y ? decimos que eso puede o no estar en la funcion establecid 
-    /*Hay 6 operadores diferentes*/ 
-    string operadores = "[\\*|\\/|\\^|\\=|\\+|\\-]";
+    /*Un entero puede tener un signo menos o no seguido de 1 o más dígitos*/
+    string enteros = "\\-?[0-9]+"; 
+
+     /*Un número real/flotante empieza igual que uno entero, con diversas opciones
+     1) puede seguirle un punto con uno o más dígitos (63.1)
+     2) puede seguirle un E/e para exponente seguido de uno o más dígitos (2e10)
+     3) puede seguirle un E/e y un signo menos seguido de uno o más dígitos (2e-10)
+     4) puede seguirle un punto decimal con uno o más dígitos seguido de un exponente
+     con uno o varios dígitos 6.1e10
+     5) puede seguirle un punto decimal con uno o más dígitos seguido de un exponente 
+     y signo menos con uno o varios dígitos 6.1e-10
+      */
+
+     // Para 6.1 -?[0-9]+\\.[0-9]+
+     // Para 2E10/2E-10/-2E10/2.1E/-2.1E10  -?[0-9]+(E/e)?[0-9]*\\.?[0-9]*(E/e)?\\-?[0-9]+
     
+    string reales = "(-?[0-9]+\\.[0-9]+)|(-?[0-9]+\\.?[0-9]*(E|e)\\-?[0-9]+)";
+
+//string reales = "\\-?[0-9]+\\.[0-9]+((E|e)(\\+|\\-)?[0-9]+)?";
+
+    /*Una variable empieza siempre por una letra, luego puede tener 0 o más veces
+    otra letra,underscore o dígito */
+    string variable = "[a-zA-Z][a-zA-Z_0-9]*";  
+
+    /*Hay 6 operadores diferentes*/ 
+    string operadores = "[\\-|\\+|\\^|\\=|\\/|\\*]";
+
+   /*Hay 2 carácteres especiales*/ 
     string especiales = "[\\(\\)]";
-    string comentarios =  " //.*$"; //. cualquier elemento  y el $ indica que continua hasta llegar al final de la linea 
+
+   /*Un cometario empieza con dos slash seguido de cualquier símbolo hasta el fin de línea*/ 
+    string comentarios = "\\/\\/.*";
 
     //Generamos un regex de tokens que estabolecimos previamente
-    regex regex_tokens(variable +"|"+ operadores +"|"+ reales +"|"+ especiales +"|"+ comentarios); // +"|"+ ees variable OR operador y el + es para agregar
+    regex regex_tokens(comentarios +"|"+ reales+"|" +  operadores +"|"+ variable +"|"+  enteros +"|" + especiales ); // +"|"+ ees variable OR operador y el + es para agregar
 
-    // definimos nuestro iterador para ir recorriendo y buscar en regex los tokens
+    //Creamos un iterador para ir recorriendo el archivo
    auto inicio_arch = 
-        // iterador para ir recorriendo match por match y detectarlos en regex_tokens
-        std::sregex_iterator(resultados.begin(), resultados.end(), regex_tokens); // leer de resultados incio a resultados final 
-    auto fin_arch = std::sregex_iterator(); // cuando ya no tenga mas elementos se deja de leer 
+    // Ver si el elemento del iterador actual se encuentra en los toxens generados
+      std::sregex_iterator(resultados.begin(), resultados.end(), regex_tokens);
+    // Si ya es el fin del archivo termina
+    auto fin_arch = std::sregex_iterator(); 
 
-    // vamos a ir leyendo caracter x caracter, al detectar su token, pasamos al siguiente carcater
+  
+    //Leemos caracter por caracter, si detecta un token pasamos al siguiente caracter
     for (std::sregex_iterator i = inicio_arch; i != fin_arch; ++i) {
       std::smatch match = *i; // con el * lo desreferencia, desapuntador                                               
       std::string caracter = match.str(); // lo convertimos a string
-      if(regex_match(caracter, regex(variable))){ //ya que tebemos el string, vemos si esta hace match con el regex, que basta solo con poner regex ya que se llama al constructor
-        cout << caracter << " -> Token de Variable" << endl;
+
+      //¿Es un entero?
+      if(regex_match(caracter, regex(enteros))){
+        cout << caracter << " | TOKEN DE NÚMERO ENTERO" << endl;
+        cout << "---------------------------------------------"<< endl;
+      //¿Es un número real?
       }else if(regex_match(caracter, regex(reales))){
-        cout << caracter << " -> Token de numero real" << endl;
+        cout << caracter << " | TOKEN DE NÚMERO REAL/FLOTANTE" << endl;
+        cout << "---------------------------------------------"<< endl;
+      //¿Es un comentario?
       }else if(regex_match(caracter, regex(comentarios))){
-        cout << caracter << " -> Token de comentario" << endl;
+        cout << caracter << " | TOKEN DE COMENTARIO" << endl;
+        cout << "---------------------------------------------"<< endl;
+      //¿Es una variable?
+      }else if(regex_match(caracter, regex(variable))){
+        cout << caracter << " | TOKEN DE VARIABLE" << endl;
+        cout << "---------------------------------------------"<< endl;
+      // ¿Es un caracter especial?
       }else if(regex_match(caracter, regex(especiales))){
         if(caracter == "("){
-          cout << caracter << " -> Token especial, parentesis que abre" << endl;
+          cout << caracter << " | TOKEN ESPECIAL -> Paréntesis izquierdo" << endl;
+          cout << "---------------------------------------------"<< endl;
         }else{
-          cout << caracter << " -> Token especial, parentesis que cierra" << endl;
+          cout << caracter << " | TOKEN ESPECIAL -> Paréntesis derecho"  << endl;
+          cout << "---------------------------------------------"<< endl;
         }
+      //¿Es algún operador?
       }else if(regex_match(caracter, regex(operadores))){
         if(caracter == "="){
-          cout << caracter << " -> Token operador, asignacion" << endl;
-        }
+          cout << caracter << " | TOKEN OPERADOR -> Asignación" << endl;
+          cout << "---------------------------------------------"<< endl;
       }else if(caracter == "+"){
-        cout << caracter << " -> Token operador, suma" << endl;
+        cout << caracter << " | TOKEN OPERADOR -> Suma" << endl;
+        cout << "---------------------------------------------"<< endl;
       }else if(caracter == "-"){
-        cout << caracter << " -> Token operador, resta" << endl;
+        cout << caracter << " | TOKEN OPERADOR -> Resta" << endl;
+        cout << "---------------------------------------------"<< endl;
       }else if(caracter == "*"){
-        cout << caracter << " -> Token operador, multiplicacion" << endl;
+        cout << caracter << " | TOKEN OPERADOR -> Multiplicación" << endl;
+        cout << "---------------------------------------------"<< endl;
       }else if(caracter == "/"){
-        cout << caracter << " -> Token operador, division" << endl;
+        cout << caracter << " | TOKEN OPERADOR -> División" << endl;
+        cout << "---------------------------------------------"<< endl;
       }else{
-        cout << caracter << " -> Token operador, potencia" << endl;
+        cout << caracter << " | TOKEN OPERADOR -> Potencia" << endl;
+        cout << "---------------------------------------------"<< endl;
       }
     }
+  }
   }
 }
 
