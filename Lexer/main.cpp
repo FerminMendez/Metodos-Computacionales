@@ -1,55 +1,112 @@
+#/*
+Jordana Betancourt Menchaca y Fermín Méndez García
+ */
+
 #include <iostream>
+#include <fstream>
 #include <vector>
-#include "token.h"
+#include <sstream>
+#include <regex>
+#include <queue>
 using namespace std;
 
+class Token
+{
+private:
+  string value;
+  string type;
+  bool finished;
+  
 
+public:
+  Token();
+  string print();
+  void add(char c);
+  //Para reiniciar el token
+  bool is_complete();
+  void reset();
+  
+  string get_type(){return type;};
+};
 
-char getType(char c){
-  if(c==1|| c==2 || c==3){
-    return 'n';
-  }
-  else{
-    return 'f';
-  }
+Token::Token()
+{
+  value = "";
+  type = "";
+  finished= false;
+}
+void Token::reset(){
+  value = "";
+  type = "";
+  finished= false;
 }
 
+bool Token::is_complete(){
+  return finished;
+}
 
-void lexerAritmetico(string archivo) {
-  Token t;
-  int* current=0;
-  string token;
-  bool finishedToken=true;
-  while(*current<archivo.size()){
-    cout<<archivo[*current];
-    if(archivo[*current]== ' ' || archivo[*current]=='\n'){
-      finishedToken=true;
-    }
-    else{
-      Token t;
-      while(t.valid(archivo[*current],getType(archivo[*current]))){
-        current++;
+string Token::print()
+{
+  return value + " es " + type + "\n";
+}
+
+void Token::add(char c)
+{
+  type="all";
+  value+=c;
+}
+
+void lexerAritmetico(string archivo)
+{
+  ifstream input;
+  string linea;
+  input.open(archivo);
+
+  queue<Token> tokens;//Donde se almacenan los tokens
+  if (!input.is_open())
+  {
+    cout << "No se puedo leer el archivo";
+  }
+
+  int i=0;
+  char c;
+  Token current_token;
+  // Obtener las líneas del archivo de texto
+  while (getline(input, linea))
+  {
+    i=0;
+    while (i<linea.size()){
+      c=linea[i];
+      current_token.add(c);
+      if(current_token.is_complete()){
+        tokens.push(current_token);
+        current_token.reset();
       }
-      cout<<t.printToken();
-      finishedToken=false;
+      i++;
     }
-    current++;
+    if(current_token.get_type()!=""){
+      tokens.push(current_token);
+      current_token.reset();
+    }
+    cout<<endl;
   }
-  // to do
+
+  while(!tokens.empty()){
+    cout<<tokens.front().print()<<endl;
+    tokens.pop();
+  }
+
+  
 }
 
-
-
-
-
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
   // if (argc != 2) {
   //   cout << "usage: " << argv[0] << " pathname\n";
   //   return -1;
   // }
-  string cadena= "b=7 \na = 32.4 *(-8.6 - b)/       6.1E-8\nd = a ^ b // Esto es un comentario";
-  //lexerAritmetico(argv[1]);
-  lexerAritmetico(cadena);
+
+  lexerAritmetico("prueba.txt");
+
   return 0;
 }
-
