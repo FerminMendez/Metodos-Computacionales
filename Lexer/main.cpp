@@ -4,9 +4,8 @@ Jordana Betancourt Menchaca y Fermín Méndez García
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <sstream>
-#include <regex>
+#include <ctype.h>
 #include <queue>
 using namespace std;
 
@@ -14,7 +13,10 @@ class Token
 {
 private:
   string value;
-  string type;
+  char type;
+  //e = empty
+  //n= number
+  // l= letter
   bool finished;
   
 
@@ -26,18 +28,18 @@ public:
   bool is_complete();
   void reset();
   
-  string get_type(){return type;};
+  char get_type(){return type;};
 };
 
 Token::Token()
 {
   value = "";
-  type = "";
+  type = 'e';
   finished= false;
 }
 void Token::reset(){
   value = "";
-  type = "";
+  type = 'e';
   finished= false;
 }
 
@@ -52,8 +54,45 @@ string Token::print()
 
 void Token::add(char c)
 {
-  type="all";
-  value+=c;
+  switch (type){
+   case 'e':
+        if(isblank(c)){
+          return;
+        }
+        if(isdigit(c)){
+          type='n';
+          value+=c;
+        }
+    case 'n':
+       if(isdigit(c)){
+          value+=c;
+        }
+    default:
+      finished=true;
+  }
+  
+  // if(type=='e' ){//Se come los espacios en blanco
+  //  if(isblank(c)){
+  //    return;
+  //  }
+  //  if(isdigit(c)){
+  //    type="number";
+  //  }
+  // }
+  // if(c==isblank(c)){
+  // finished=true;
+  // return;
+  // }
+  // if(type=="number"){
+  //   if(isdigit(c)){
+  //     value+=c;
+  //   }
+  //   else{
+  //     finished=true;
+
+  //   }
+  // }
+  
 }
 
 void lexerAritmetico(string archivo)
@@ -84,7 +123,7 @@ void lexerAritmetico(string archivo)
       }
       i++;
     }
-    if(current_token.get_type()!=""){
+    if(current_token.get_type()!='e'){
       tokens.push(current_token);
       current_token.reset();
     }
