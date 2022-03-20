@@ -1,18 +1,25 @@
 /*
-Jordana Betancourt Menchaca y Fermín Méndez García
+// File: main.cpp
+// Authors: Jordana Betancourt Menchaca A01707434 y Fermín Méndez García A01703366
+// Date: 19/03/2022
+//
+// Implementación de un DFA.
+//
+// Función que imprime los tokens encontrados en un archivo, caracter por caracter.
+//
  */
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <sstream>
 #include <regex>
+
 using namespace std;
 
 void lexerAritmetico(string archivo) {
   ifstream input;
   string resultados;
-  vector<char>::iterator it;
+
   input.open(archivo);
 
    if (!input.is_open()) {
@@ -36,13 +43,9 @@ void lexerAritmetico(string archivo) {
      5) puede seguirle un punto decimal con uno o más dígitos seguido de un exponente 
      y signo menos con uno o varios dígitos 6.1e-10
       */
-
-     // Para 6.1 -?[0-9]+\\.[0-9]+
-     // Para 2E10/2E-10/-2E10/2.1E/-2.1E10  -?[0-9]+(E/e)?[0-9]*\\.?[0-9]*(E/e)?\\-?[0-9]+
     
-    string reales = "(-?[0-9]+\\.[0-9]+)|(-?[0-9]+\\.?[0-9]*(E|e)\\-?[0-9]+)";
+    string reales = "(-?[0-9]+(\\.?|(E|e)?)\\-?[0-9]*(E|e)?\\-?[0-9]*)";
 
-//string reales = "\\-?[0-9]+\\.[0-9]+((E|e)(\\+|\\-)?[0-9]+)?";
 
     /*Una variable empieza siempre por una letra, luego puede tener 0 o más veces
     otra letra,underscore o dígito */
@@ -124,14 +127,16 @@ void lexerAritmetico(string archivo) {
   }
 }
 
+//Main 
 int main(int argc, char* argv[]) {
-  // if (argc != 2) {
-  //   cout << "usage: " << argv[0] << " pathname\n";
-  //   return -1;
-  // }
+  if (argc != 2) {
+    cout << "usage: " << argv[0] << " pathname\n";
+    return -1;
+  }
 
 
-  lexerAritmetico("input2.txt");
+  lexerAritmetico(argv[1]);
+ 
 
   return 0;
 }
