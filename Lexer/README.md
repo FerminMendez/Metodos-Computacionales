@@ -50,5 +50,5 @@ Inician con // y todo lo que sigue hasta que termina el renglón es un comentari
 
 # Manual de uso
 
-1. Paso 1
-2. Paso 2
+1. g++ main.cpp
+2. ./a.exe nombreArchivo
