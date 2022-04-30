@@ -1,4 +1,17 @@
 #lang racket
+;---------------Materia----------------
+
+;Implementación de métodos computacionales (Gpo 601)
+;Actividad Integradora 3.4 Resaltador de sintaxis 
+
+
+;---------------Profesor----------------
+; Pedro Oscar Pérez Murueta
+
+;---------------Autor----------------
+;Jordana Betancourt Menchaca A01707434
+;Fermín Méndez García        A01703366
+
 
 ;____________________________Requires______________________________
 (require 2htdp/batch-io)
@@ -8,7 +21,15 @@
 ;;https://docs.racket-lang.org/teachpack/2htdpbatch-io.html#%28def._%28%28lib._2htdp%2Fbatch-io..rkt%29._write-file%29%29
 ;;https://docs.racket-lang.org/reference/characters.html
 ;;https://docs.racket-lang.org/reference/regexp.html
+;____________________________Rutas ______________________________
 
+;(define input-file "C:\\Users\\jordi\\Downloads\\test.cpp")
+
+;(define output-file "C:\\Users\\jordi\\Downloads\\testhtml.html")
+
+(define input-file "C:\\Users\\fmend\\OneDrive\\Escritorio\\Racket\\hola.cpp")
+
+(define output-file "C:\\Users\\fmend\\OneDrive\\Escritorio\\Racket\\testhtml.html")
 
 ;____________________________File Reader______________________________
 
@@ -33,6 +54,40 @@
   (lambda (lst filename)
     (write-file filename (list->string lst))))
 
+;____________________________Lectura por lineas______________________________
+
+(define code->lines
+  (lambda (code)
+    (regexp-split #rx"\n" code)))
+
+(define clasify-code-by-line
+  (lambda (code-by-line)
+    (map clasify-line code-by-line)))
+
+(define clasify-line
+  (lambda (line-code)
+    (map clasify-element (separate-tokens line-code))))
+
+
+(define generate-body
+  (lambda (full-content)
+    
+    (cond
+      ((empty? full-content) '())
+      (else  (string-join (map generate-current-line-html full-content) "<br> " ) )
+      )
+    )
+  )
+
+(define generate-current-line-html
+  (lambda (content)
+    
+    (cond
+      ((empty? content) "")
+      (else (string-join  (map generate-current-element-html content) "" )   )
+      )
+    )
+  )
 
 ;___________________________HTML  ______________________________
 
@@ -157,7 +212,7 @@ color:#9E9E9E;
                )
 )
 
-
+;Este es un ejemplo del html que va en medio-> En este programa esta parte se genera dinamicamente
 (define mid-html
 (string-append "
       
@@ -181,53 +236,56 @@ color:#9E9E9E;
 )
 ;___________________________Funciones______________________________
 
+(define classes
+(list
+  (list "\\/\\/.*" "comentario")
+  (list "\".*\"" "string")
+  (list "\\s+" "espacio" )
+  (list "[+-]?(?=\\d*[.eE])(?=\\.?\\d)\\d*\\.?\\d*(?:[eE][+-]?\\d+)?"  "flotantes" )
+  (list "[\\-|\\+]?\\d+"  "enteros" )
+  (list "[\\(|\\)|\\#|\\;|\\<|\\>|\\,\\[|\\]|\\{|\\}\\.|\\!]"  "simbolo_esp" )
+  (list "auto|const|double|int|float|short|struct|unsigned|break|continue|else|for|long|
+   signed|switch|void|case|default|enum|goto|register|sizeof|typedef|volatile|char|do|extern|if|return|static|
+   union|while|asm|dynamic_cast|namespace|reinterpret_cast|try|bool|explicit|new|static_cast|typeid|catch|false|
+   operator|template|typename|class|friend|private|this|using|const_cast|inline|public|throw|virtual|delete|
+   mutable|protected|true|wchar_t" "reserved" )
+  (list "[a-zA-Z][a-zA-Z0-9_]*"  "variable" )
+  (list "[\\-|\\+|\\^|\\=|\\/|\\*]"  "operador" )
+   )
+  )
+
+(define anyclass
+  (lambda (classes)
+    (cond
+    ((empty? (cdr classes)) (car(car classes)))
+    (else (string-append  (car(car classes)) "|" (anyclass (cdr classes))  ))
+      )
+    )
+  )
+;pregexp
+;(separate-tokens2 code)
 ;--------------------------- Tokens ---------------------
+
+
 
 (define separate-tokens ;La función separa el codigo por tokens identificados
   (lambda (code)
-    ; El #px debe ser el OR de todas las definiciones de tokens que tenemos
-   
-    (regexp-match* #px"\\/\\/.*|\".*\"|\\s+|[\\-|\\+]?\\d+\\.\\d*[eE]?[\\-|\\+]?\\d*|[\\-|\\+]?\\d+[eE]?[\\-|\\+]?\\d*|[\\(|\\)|\\#|\\;|\\<|\\>|\\,\\[|\\]|\\{|\\}|\\.|\\!]|[\\-|\\+|\\^|\\=|\\/|\\*]|[a-zA-Z][a-zA-Z0-9_]*"  code)
+    (regexp-match* (pregexp (anyclass classes))  code)
     ))
-
-;[\\-|\\+]?\\d+(.\\d+)?([e|E]([\\-|\\+])?\\d+)?
 
 (define clasify-element
   (lambda (element)
-    (cond
+   ( clasify-element-aux element classes)
+    )
+  )
+
+(define clasify-element-aux
+  (lambda (element list-classes)
+    (cond 
       ;Aqui todas las condiciones para identificar un elemento en regex usando regex-match?
-
-      ;Comentario
-      ((regexp-match? #px"\\/\\/.*"element)(list element "comentario" ) )
-      ;String
-      ((regexp-match? #px"\".*\"" element) (list element "string" ) )
-      ;Espacio
-      ((regexp-match? #px"\\s+"element)(list element "espacio" ) )
-      
-      ;Flotantes
-      ((regexp-match? #px"[\\-|\\+]?\\d+\\.\\d*[eE]?[\\-|\\+]?\\d*" element) (list element "flotantes" ) )
-       
-       ;Enteros
-      ((regexp-match? #px"[\\-|\\+]?\\d+[eE]?[\\-|\\+]?\\d*" element) (list element "enteros" ) )
-      
-      ;Simbolo especial
-       ((regexp-match? #px"[\\(|\\)|\\#|\\;|\\<|\\>|\\,\\[|\\]|\\{|\\}\\.|\\!]" element) (list element "simbolo_esp" ) )
-      
-       ;Palabras reservadas
-      ((regexp-match? #px"auto|const|double|int|float|short|struct|unsigned|break|continue|else|for|long|
-signed|switch|void|case|default|enum|goto|register|sizeof|typedef|volatile|char|do|extern|if|return|static|
-union|while|asm|dynamic_cast|namespace|reinterpret_cast|try|bool|explicit|new|static_cast|typeid|catch|false|
-operator|template|typename|class|friend|private|this|using|const_cast|inline|public|throw|virtual|delete|
-mutable|protected|true|wchar_t" element) (list element "reserved" ) )
-     
-       ;Variable
-      ((regexp-match? #px"[a-zA-Z][a-zA-Z0-9_]*" element) (list element "variable" ) )
-
-      ;Operador
-      ((regexp-match? #px"[\\-|\\+|\\^|\\=|\\/|\\*]" element) (list element "operador" ) ) 
-
-      ;Indefinido
-      (else  (list element "undefined" ) )
+      ((empty? list-classes) (list element "undefined") )
+      ((regexp-match? (pregexp (car(car list-classes))) element) (list element (cadr(car list-classes)) ))
+      (else (clasify-element-aux element (cdr list-classes)))
       )
     )
   )
@@ -236,20 +294,23 @@ mutable|protected|true|wchar_t" element) (list element "reserved" ) )
   (lambda (content mem)
     (cond
     ((empty? content) mem)
+    ( (and (eq? (cadr(car content)) (cadr(car mem))) (eq? (cadr(car content)) "enteros") (regexp-match? #px"[\\-|\\+]\\d+" (car (car mem)))  )
+      (pack-aux (cdr content) (append (list   (list (car (car content))  "enteros") (list (car(regexp-match #px"[\\-|\\+]" (car (car mem)))) "operador") (list (car(regexp-match #px"\\d+" (car (car mem))))  "enteros") )  (cdr mem)) ))
+    
     ((eq? (cadr(car content)) (cadr(car mem))) (pack-aux (cdr content) (append (list   (list (string-append (car (car content)) " " (car (car mem)))  (cadr(car mem)) ))  (cdr mem)) ) )
     (else (pack-aux (cdr content) (append (list (car content)) mem ) ))
 
       )
     )
   )
-
-
+;(regexp-match? #px"\\+\\d+" (car (car mem))) 
+;(map pack full-content)
+;Para no crear una etiqueta de html por cada palabra, generamos una función que agrupe las palabras con mismo tipo y que sean consecutivas
 (define pack
   (lambda (content)
     (cond
     ((empty? content) '())
     (else (pack-aux (cdr (reverse content)) (list(car (reverse content))) ))
-
       )
     )
   )
@@ -305,73 +366,16 @@ mutable|protected|true|wchar_t" element) (list element "reserved" ) )
       )
     )
   )
+
+
 ;____________________________ Constantes ______________________________
-
-(define input-file "C:\\Users\\jordi\\Downloads\\test.cpp")
-
-(define output-file "C:\\Users\\jordi\\Downloads\\testhtml.html")
-
-;(define input-file "C:\\Users\\fmend\\OneDrive\\Escritorio\\Racket\\test.cpp")
-
-;(define output-file "C:\\Users\\fmend\\OneDrive\\Escritorio\\Racket\\testhtml.html")
 
 (define code (apply string (file->list-of-chars input-file)))
 
-(define content (map clasify-element (separate-tokens code)))
-;____________________________Lectura por lineas______________________________
-
-(define code->lines
-  (lambda (code)
-    (regexp-split #rx"\n" code)))
-
-(define clasify-code-by-line
-  (lambda (code-by-line)
-    (map clasify-line code-by-line)))
-
-(define clasify-line
-  (lambda (line-code)
-    (map clasify-element (separate-tokens line-code))))
-
-
-(define generate-body
-  (lambda (full-content)
-    
-    (cond
-      ((empty? content) '())
-      (else  (string-join (map generate-current-line-html full-content) "<br> " ) )
-      )
-    )
-  )
-
-(define generate-current-line-html
-  (lambda (content)
-    
-    (cond
-      ((empty? content) "")
-      (else (string-join  (map generate-current-element-html content) "" )   )
-      )
-    )
-  )
-
+(define full-content (map pack(clasify-code-by-line (code->lines code))))
 
 ;____________________________Prueba de funciones______________________________
-;Recibe el codigo por lineas y devuelve una content separado por lineas
-; input:("#include <iostream>"
- ; "#include <string>"
- ; "using namespace std;"
- ;""
- ; "    int r,c;")
 
-(define full-content (clasify-code-by-line (code->lines code)))
-
-;____________________________Prueba de funciones______________________________
-;( code->lines code)
-
-;content
 (write-html full-content)
 
-;(separate-tokens "    int r,c;")
-;(clasify-line "    int r,c;")
-;full-content
-;(generate-current-line-html '(("                    " "espacio") ("x" "variable") ("x" "variable") (" " "espacio") ("to_string" "variable") ("i" "variable") ("j" "variable")) )
-;(generate-body full-content)
+
